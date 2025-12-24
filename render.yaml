@@ -3,8 +3,6 @@ services:
     name: meeting-minutes
     env: node
     rootDirectory: server
-    plan: starter
-    autoDeploy: true
     buildCommand: npm install
     startCommand: npm start
     disk:
@@ -17,8 +15,8 @@ services:
       - key: DB_PATH
         value: /data/database.sqlite
       - key: SESSION_SECRET
-        sync: false
+        generateValue: true
       - key: CORS_ORIGIN
-        sync: false
+        value: https://meetingminutes-chi.vercel.app
       - key: OPENAI_API_KEY
-        sync: false
+        value: ""
