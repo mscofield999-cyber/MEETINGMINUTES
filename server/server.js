@@ -22,7 +22,10 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'change_me_in_production',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.SESSION_COOKIE_SECURE === 'true' }
+    cookie: { 
+        secure: process.env.SESSION_COOKIE_SECURE === 'true',
+        sameSite: (process.env.SESSION_COOKIE_SECURE === 'true') ? 'none' : 'lax'
+    }
 }));
 
 // Auth Middleware

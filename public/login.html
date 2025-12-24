@@ -89,7 +89,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    window.location.href = redirectBase + '/index.html';
+                    window.location.href = window.location.origin + '/index.html';
                 } else {
                     errorMsg.textContent = 'بيانات الدخول غير صحيحة';
                     errorMsg.style.display = 'block';
