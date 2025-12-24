@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>Meeting Minutes</title>
+  <style>
+    @page { size: Letter; margin: 0.8in; }
+    body { font-family: "Source Serif 4", serif; font-size: 12pt; line-height: 1.5; color: #000; }
+    header { position: running(header); text-align: left; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
+    footer { position: running(footer); text-align: left; border-top: 1px solid #ccc; padding-top: 8px; font-size: 10pt; }
+    .page-header { display: block; }
+    .page-footer { display: block; }
+    .watermark { position: fixed; left: 0; top: 40%; width: 100%; text-align: center; opacity: 0.1; font-size: 48pt; }
+    h1, h2, h3 { margin: 0 0 8px 0; }
+    .section { margin: 12px 0; }
+    .meta, .attendees, .agenda, .topics, .decisions, .actions { border: 1px solid #ccc; padding: 8px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
+    .stamp { height: 60px; width: 60px; float: right; }
+    .signature { margin-top: 24px; text-align: left; }
+    @page {
+      @top-center { content: element(header) }
+      @bottom-center { content: element(footer) }
+    }
+  </style>
+</head>
+<body>
+  <header class="page-header">
+    <div>Organization Logo • Meeting Minutes</div>
+  </header>
+  <footer class="page-footer">
+    <div>Page <span class="pageNumber"></span> / <span class="totalPages"></span></div>
+  </footer>
+  <div class="watermark">CONFIDENTIAL</div>
+  <h1>Meeting Minutes</h1>
+  <div class="section meta">
+    <h2>Meeting Details</h2>
+    <table>
+      <tr><th>Date</th><td>YYYY-MM-DD</td></tr>
+      <tr><th>Time</th><td>HH:mm–HH:mm</td></tr>
+      <tr><th>Location</th><td>...</td></tr>
+    </table>
+  </div>
+  <div class="section attendees">
+    <h2>Attendees</h2>
+    <table>
+      <tr><th>Name</th><th>Role</th></tr>
+      <tr><td>...</td><td>...</td></tr>
+    </table>
+  </div>
+  <div class="section agenda">
+    <h2>Agenda</h2>
+    <ul><li>...</li></ul>
+  </div>
+  <div class="section topics">
+    <h2>Topics and Discussions</h2>
+    <p>...</p>
+  </div>
+  <div class="section decisions">
+    <h2>Decisions</h2>
+    <ul><li>...</li></ul>
+  </div>
+  <div class="section actions">
+    <h2>Action Items</h2>
+    <table>
+      <tr><th>Task</th><th>Owner</th><th>Due Date</th><th>Status</th></tr>
+      <tr><td>...</td><td>...</td><td>YYYY-MM-DD</td><td>Open</td></tr>
+    </table>
+  </div>
+  <div class="signature">
+    <img class="stamp" src="stamp.png" alt="Approval Stamp">
+    <div>Digital Signature: Approved by ... at ...</div>
+  </div>
+</body>
+</html>

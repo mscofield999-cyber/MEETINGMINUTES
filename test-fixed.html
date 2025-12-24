@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام محاضر الاجتماعات - اختبار</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="./node_modules/signature_pad/dist/signature_pad.umd.min.js"></script>
+    <script src="./node_modules/html2canvas/dist/html2canvas.min.js"></script>
+    <script src="./node_modules/jspdf/dist/jspdf.umd.min.js"></script>
+    <script>
+        // تأكد من أن jsPDF متاح بشكل عام
+        window.jsPDF = jspdf.jsPDF;
+    </script>
+    <link rel="stylesheet" href="./src/App.css">
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        const App = () => {
+            const [formData, setFormData] = useState({
+                meetingTitle: 'اجتماع اختباري',
+                meetingDate: '2024-12-24',
+                meetingTime: '10:00',
+                meetingLocation: 'القاعة الرئيسية',
+                meetingType: 'عادي',
+                chairman: 'أحمد محمد',
+                secretary: 'علي حسن',
+                attendees: 'محمد، خالد، سارة، فاطمة',
+                agendaItems: '1. مناقشة المشاريع الجديدة\n2. تقييم الأداء',
+                decisions: '1. الموافقة على الميزانية\n2. تعيين فريق جديد',
+                actionItems: '1. إعداد تقرير المشروع - أحمد - 2024-12-31',
+                nextMeetingDate: '2025-01-15',
+                signatureData: null
+            });
+
+            const [isSigned, setIsSigned] = useState(true);
+            const signatureCanvasRef = useRef(null);
+            const [signaturePad, setSignaturePad] = useState(null);
+
+            useEffect(() => {
+                if (signatureCanvasRef.current) {
+                    const pad = new SignaturePad(signatureCanvasRef.current, {
+                        minWidth: 1,
+                        maxWidth: 3,
+                        penColor: 'rgb(0, 0, 0)',
+                        backgroundColor: 'rgb(255, 255, 255)'
+                    });
+                    setSignaturePad(pad);
+                    
+                    // Simulate a signature for testing
+                    setTimeout(() => {
+                        if (!pad.isEmpty()) {
+                            const signatureData = pad.toDataURL();
+                            setFormData(prev => ({ ...prev, signatureData }));
+                        }
+                    }, 1000);
+                }
+            }, []);
+
+            const handleInputChange = (e) => {
+                const { name, value } = e.target;
+                setFormData(prev => ({
+                    ...prev,
+                    [name]: value
+                }));
+            };
+
+            const handleSignatureSave = () => {
+                if (signaturePad && !signaturePad.isEmpty()) {
+                    const signatureData = signaturePad.toDataURL();
+                    setFormData(prev => ({
+                        ...prev,
+                        signatureData
+                    }));
+                    setIsSigned(true);
+                    alert('تم حفظ التوقيع بنجاح');
+                } else {
+                    alert('يرجى التوقيع أولاً');
+                }
+            };
+
+            const handleSignatureClear = () => {
+                if (signaturePad) {
+                    signaturePad.clear();
+                    setFormData(prev => ({
+                        ...prev,
+                        signatureData: null
+                    }));
+                    setIsSigned(false);
+                }
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!isSigned) {
+                    alert('يرجى التوقيع على المحضر أولاً');
+                    return;
+                }
+                
+                alert('تم حفظ المحضر بنجاح وتوقيعه إلكترونياً');
+                console.log('بيانات المحضر:', formData);
+                generatePDF();
+            };
+
+            const generatePDF = () => {
+                try {
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    // إضافة محتوى PDF مباشرة
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(16);
+                    pdf.text('محضر الاجتماع', 105, 20, { align: 'center' });
+                    
+                    pdf.setFontSize(12);
+                    pdf.text(`عنوان الاجتماع: ${formData.meetingTitle}`, 20, 40);
+                    pdf.text(`التاريخ: ${formData.meetingDate}`, 20, 50);
+                    pdf.text(`الوقت: ${formData.meetingTime}`, 20, 60);
+                    pdf.text(`المكان: ${formData.meetingLocation}`, 20, 70);
+                    pdf.text(`النوع: ${formData.meetingType}`, 20, 80);
+                    
+                    pdf.text(`رئيس الاجتماع: ${formData.chairman}`, 20, 100);
+                    pdf.text(`مقرر الاجتماع: ${formData.secretary}`, 20, 110);
+                    
+                    // إضافة الحضور
+                    const attendeesLines = pdf.splitTextToSize(`الحضور: ${formData.attendees}`, 170);
+                    pdf.text(attendeesLines, 20, 130);
+                    
+                    // إضافة التوقيع إذا موجود
+                    if (formData.signatureData) {
+                        pdf.text('تم التوقيع إلكترونياً', 20, 200);
+                        pdf.text(`التاريخ: ${new Date().toLocaleDateString('ar-EG')}`, 20, 210);
+                    }
+                    
+                    pdf.save(`محضر_اجتماع_${formData.meetingDate}.pdf`);
+                    alert('تم إنشاء ملف PDF بنجاح!');
+                } catch (error) {
+                    console.error('خطأ في إنشاء PDF:', error);
+                    alert('حدث خطأ أثناء إنشاء ملف PDF: ' + error.message);
+                }
+            };
+
+            const handlePrint = () => {
+                window.print();
+            };
+
+            return (
+                <div className="container">
+                    <div className="header">
+                        <h1>نظام محاضر الاجتماعات</h1>
+                        <p>نموذج اختبار النظام</p>
+                    </div>
+
+                    <div className="form-container">
+                        <form onSubmit={handleSubmit}>
+                            <div className="form-section">
+                                <h2>معلومات الاجتماع الأساسية</h2>
+                                <div className="grid">
+                                    <div className="form-group">
+                                        <label>عنوان الاجتماع *</label>
+                                        <input
+                                            type="text"
+                                            name="meetingTitle"
+                                            value={formData.meetingTitle}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>تاريخ الاجتماع *</label>
+                                        <input
+                                            type="date"
+                                            name="meetingDate"
+                                            value={formData.meetingDate}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>وقت الاجتماع</label>
+                                        <input
+                                            type="time"
+                                            name="meetingTime"
+                                            value={formData.meetingTime}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>مكان الاجتماع</label>
+                                        <input
+                                            type="text"
+                                            name="meetingLocation"
+                                            value={formData.meetingLocation}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>نوع الاجتماع</label>
+                                        <select
+                                            name="meetingType"
+                                            value={formData.meetingType}
+                                            onChange={handleInputChange}
+                                        >
+                                            <option value="عادي">عادي</option>
+                                            <option value="طارئ">طارئ</option>
+                                            <option value="دوري">دوري</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h2>المشاركون في الاجتماع</h2>
+                                <div className="grid">
+                                    <div className="form-group">
+                                        <label>رئيس الاجتماع *</label>
+                                        <input
+                                            type="text"
+                                            name="chairman"
+                                            value={formData.chairman}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>مقرر الاجتماع *</label>
+                                        <input
+                                            type="text"
+                                            name="secretary"
+                                            value={formData.secretary}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+
+                                    <div className="form-group">
+                                        <label>الحضور</label>
+                                        <textarea
+                                            name="attendees"
+                                            value={formData.attendees}
+                                            onChange={handleInputChange}
+                                            rows="3"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h2>بنود جدول الأعمال</h2>
+                                <div className="form-group">
+                                    <textarea
+                                        name="agendaItems"
+                                        value={formData.agendaItems}
+                                        onChange={handleInputChange}
+                                        rows="4"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h2>القرارات والتوصيات</h2>
+                                <div className="form-group">
+                                    <textarea
+                                        name="decisions"
+                                        value={formData.decisions}
+                                        onChange={handleInputChange}
+                                        rows="4"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h2>بنود العمل والمهام</h2>
+                                <div className="form-group">
+                                    <textarea
+                                        name="actionItems"
+                                        value={formData.actionItems}
+                                        onChange={handleInputChange}
+                                        rows="4"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-section">
+                                <h2>التوقيع الإلكتروني *</h2>
+                                <div className="signature-container">
+                                    <canvas 
+                                        ref={signatureCanvasRef} 
+                                        width={400} 
+                                        height={150} 
+                                        className="signature-pad"
+                                        style={{ border: '1px solid #ccc', borderRadius: '4px' }}
+                                    />
+                                    <div className="signature-actions">
+                                        <button 
+                                            type="button" 
+                                            className="btn btn-primary" 
+                                            onClick={handleSignatureSave}
+                                        >
+                                            حفظ التوقيع
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            className="btn btn-secondary" 
+                                            onClick={handleSignatureClear}
+                                        >
+                                            مسح التوقيع
+                                        </button>
+                                    </div>
+                                    {isSigned && (
+                                        <div className="signature-status">
+                                            <span className="text-success">✓ تم التوقيع بنجاح</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="form-actions">
+                                <button type="submit" className="btn btn-success">
+                                    حفظ المحضر وتصدير PDF
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={generatePDF}>
+                                    اختبار PDF فقط
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Preview for PDF generation */}
+                    <div id="meeting-minutes-preview" style={{ display: 'none' }}>
+                        <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', direction: 'rtl' }}>
+                            <h1 style={{ textAlign: 'center', color: '#007acc' }}>محضر الاجتماع</h1>
+                            <h2>بيانات الاجتماع</h2>
+                            <p><strong>العنوان:</strong> {formData.meetingTitle}</p>
+                            <p><strong>التاريخ:</strong> {formData.meetingDate}</p>
+                            <p><strong>الوقت:</strong> {formData.meetingTime}</p>
+                            <p><strong>المكان:</strong> {formData.meetingLocation}</p>
+                            <p><strong>النوع:</strong> {formData.meetingType}</p>
+                            
+                            <h2>المشاركون</h2>
+                            <p><strong>الرئيس:</strong> {formData.chairman}</p>
+                            <p><strong>المقرر:</strong> {formData.secretary}</p>
+                            <p><strong>الحضور:</strong> {formData.attendees}</p>
+                            
+                            <h2>جدول الأعمال</h2>
+                            <p>{formData.agendaItems}</p>
+                            
+                            <h2>القرارات</h2>
+                            <p>{formData.decisions}</p>
+                            
+                            <h2>المهام</h2>
+                            <p>{formData.actionItems}</p>
+                            
+                            <h2>التوقيع</h2>
+                            {formData.signatureData && (
+                                <div>
+                                    <img src={formData.signatureData} alt="التوقيع" style={{ width: '200px', border: '1px solid #000' }} />
+                                    <p>تم التوقيع إلكترونياً بتاريخ {new Date().toLocaleDateString('ar-EG')}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

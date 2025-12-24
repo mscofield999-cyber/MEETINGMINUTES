@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام محاضر الاجتماعات الاحترافي</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@5.1.3/dist/signature_pad.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>منصة محضر</h1>
+                <p>نظام إلكتروني متكامل لتوثيق واعتماد المحاضر</p>
+            </div>
+            <div class="user-info" id="userInfoDisplay" style="display: none;">
+                <span id="userNameDisplay">مرحباً، المستخدم</span>
+                <span id="userRoleDisplay" class="badge"></span>
+            </div>
+        </header>
+
+        <nav class="main-nav">
+            <button id="navNewMinute" class="nav-btn active">محضر جديد</button>
+            <button id="navArchive" class="nav-btn">أرشيف المحاضر</button>
+            <button id="navLogout" class="nav-btn logout-btn"><i class="fas fa-sign-out-alt"></i> تسجيل خروج</button>
+        </nav>
+
+        <main id="mainContent">
+            <!-- New Minute Section -->
+            <div id="newMinuteSection">
+                <form id="meetingForm" class="meeting-form">
+                    
+                    <!-- Section 0: Report Settings (New) -->
+                    <div class="form-section settings-section">
+                        <div class="section-header">
+                            <i class="fas fa-cog"></i>
+                            <h2>إعدادات التقرير والطباعة</h2>
+                        </div>
+                        <div class="form-row three-cols">
+                            <div class="form-group">
+                                <label for="orgName">اسم المؤسسة / الشركة</label>
+                                <input type="text" id="orgName" name="orgName" placeholder="شركة المثال التقنية">
+                            </div>
+                            <div class="form-group">
+                                <label for="logoUpload">شعار المؤسسة</label>
+                                <input type="file" id="logoUpload" accept="image/*" class="file-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="watermarkText">نص العلامة المائية</label>
+                                <select id="watermarkText" name="watermarkText">
+                                    <option value="">بدون علامة مائية</option>
+                                    <option value="سري للغاية">سري للغاية</option>
+                                    <option value="مسودة">مسودة</option>
+                                    <option value="نسخة معتمدة">نسخة معتمدة</option>
+                                    <option value="للاستخدام الداخلي">للاستخدام الداخلي</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="watermarkImage">أو صورة العلامة المائية</label>
+                                <input type="file" id="watermarkImage" accept="image/*" class="file-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 1: Basic Info -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-info-circle"></i>
+                            <h2>البيانات الأساسية</h2>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="referenceNumber">الرقم المرجعي</label>
+                                <input type="text" id="referenceNumber" name="referenceNumber" placeholder="مثال: REF-2024-001">
+                            </div>
+                            <div class="form-group">
+                                <label for="department">الإدارة / القسم *</label>
+                                <select id="department" name="department" required class="form-control">
+                                    <option value="">اختر الإدارة / القسم...</option>
+                                    <optgroup label="المجلس الاستشاري والإدارات التنفيذية">
+                                        <option value="المجلس الاستشاري">المجلس الاستشاري</option>
+                                        <option value="إدارة المراجعة الداخلية">إدارة المراجعة الداخلية</option>
+                                        <option value="الرئيس التنفيذي">الرئيس التنفيذي</option>
+                                        <option value="إدارة التغير والتواصل المؤسسي">إدارة التغير والتواصل المؤسسي</option>
+                                        <option value="مكتب الرئيس التنفيذي">مكتب الرئيس التنفيذي</option>
+                                        <option value="إدارة الأمن السيبراني">إدارة الأمن السيبراني</option>
+                                        <option value="إدارة الشؤون القانونية">إدارة الشؤون القانونية</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع الإمداد">
+                                        <option value="الإمداد (الإدارة العامة)">الإمداد (الإدارة العامة)</option>
+                                        <option value="المستودعات">المستودعات</option>
+                                        <option value="ضبط الأداء">ضبط الأداء</option>
+                                        <option value="التخطيط والاحتياج">التخطيط والاحتياج</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع التخطيط والتحول">
+                                        <option value="التخطيط والتحول وإدارة تطوير الأعمال (الإدارة العامة)">التخطيط والتحول وإدارة تطوير الأعمال (الإدارة العامة)</option>
+                                        <option value="إدارة التخطيط">إدارة التخطيط</option>
+                                        <option value="إدارة التحول وتطوير الأعمال">إدارة التحول وتطوير الأعمال</option>
+                                        <option value="مشاركة القطاع الخاص">مشاركة القطاع الخاص</option>
+                                        <option value="إدارة المشاريع">إدارة المشاريع</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع الموارد البشرية">
+                                        <option value="الموارد البشرية (الإدارة العامة)">الموارد البشرية (الإدارة العامة)</option>
+                                        <option value="إدارة مراقبة انتظام الدوام">إدارة مراقبة انتظام الدوام</option>
+                                        <option value="إدارة عمليات الموارد البشرية">إدارة عمليات الموارد البشرية</option>
+                                        <option value="إدارة التوظيف واستقطاب الكفاءات">إدارة التوظيف واستقطاب الكفاءات</option>
+                                        <option value="إدارة أنظمة الموارد البشرية">إدارة أنظمة الموارد البشرية</option>
+                                        <option value="إدارة الرواتب والاستحقاقات">إدارة الرواتب والاستحقاقات</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع المالية">
+                                        <option value="المالية (الإدارة العامة)">المالية (الإدارة العامة)</option>
+                                        <option value="إدارة الشؤون المالية">إدارة الشؤون المالية</option>
+                                        <option value="إدارة العقود والمشتريات">إدارة العقود والمشتريات</option>
+                                        <option value="إدارة الميزانية والتخطيط المالي">إدارة الميزانية والتخطيط المالي</option>
+                                        <option value="إدارة مراقبة المخزون">إدارة مراقبة المخزون</option>
+                                        <option value="إدارة تنمية الإيرادات">إدارة تنمية الإيرادات</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع التقنية والتحول الرقمي">
+                                        <option value="التقنية والتحول الرقمي (الإدارة العامة)">التقنية والتحول الرقمي (الإدارة العامة)</option>
+                                        <option value="إدارة خدمات تقنية المعلومات">إدارة خدمات تقنية المعلومات</option>
+                                        <option value="إدارة حلول الأعمال">إدارة حلول الأعمال</option>
+                                        <option value="إدارة المعلومات الصحية">إدارة المعلومات الصحية</option>
+                                        <option value="إدارة ذكاء الأعمال">إدارة ذكاء الأعمال</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع التشغيل">
+                                        <option value="التشغيل (الإدارة العامة)">التشغيل (الإدارة العامة)</option>
+                                        <option value="إدارة الشؤون الهندسية">إدارة الشؤون الهندسية</option>
+                                        <option value="إدارة الخدمات المساندة">إدارة الخدمات المساندة</option>
+                                        <option value="إدارة الصيانة">إدارة الصيانة</option>
+                                        <option value="إدارة الأمن والسلامة">إدارة الأمن والسلامة</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع الجودة والتميز المؤسسي">
+                                        <option value="الجودة والتميز المؤسسي (الإدارة العامة)">الجودة والتميز المؤسسي (الإدارة العامة)</option>
+                                        <option value="إدارة الجودة وسلامة المرضى">إدارة الجودة وسلامة المرضى</option>
+                                        <option value="إدارة الأداء والنتائج">إدارة الأداء والنتائج</option>
+                                        <option value="إدارة الاعتماد والتميز المؤسسي">إدارة الاعتماد والتميز المؤسسي</option>
+                                        <option value="إدارة تجربة المريض">إدارة تجربة المريض</option>
+                                        <option value="الحوكمة وإدارة المخاطر">الحوكمة وإدارة المخاطر</option>
+                                        <option value="إدارة بلاغات 937">إدارة بلاغات 937</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع تقديم الرعاية">
+                                        <option value="تقديم الرعاية (الإدارة العامة)">تقديم الرعاية (الإدارة العامة)</option>
+                                        <option value="إدارة الصحة السكانية">إدارة الصحة السكانية</option>
+                                        <option value="إدارة الصحة العامة وخدمة المجتمع">إدارة الصحة العامة وخدمة المجتمع</option>
+                                        <option value="إدارة خدمات التمريض">إدارة خدمات التمريض</option>
+                                        <option value="إدارة المسارات السريرية التخصصية">إدارة المسارات السريرية التخصصية</option>
+                                        <option value="إدارة نموذج الرعاية الصحية">إدارة نموذج الرعاية الصحية</option>
+                                        <option value="إدارة الخدمات العلاجية">إدارة الخدمات العلاجية</option>
+                                        <option value="إدارة الطوارئ والتنسيق الطبي">إدارة الطوارئ والتنسيق الطبي</option>
+                                        <option value="إدارة المستشفيات والمراكز المتخصصة">إدارة المستشفيات والمراكز المتخصصة</option>
+                                    </optgroup>
+                                    <optgroup label="قطاع التدريب والشؤون الأكاديمية">
+                                        <option value="التدريب والشؤون الأكاديمية (الإدارة العامة)">التدريب والشؤون الأكاديمية (الإدارة العامة)</option>
+                                        <option value="إدارة الدراسات والابتعاث">إدارة الدراسات والابتعاث</option>
+                                        <option value="إدارة التدريب">إدارة التدريب</option>
+                                        <option value="إدارة البحوث والدراسات">إدارة البحوث والدراسات</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="meetingTitle">عنوان الاجتماع *</label>
+                            <input type="text" id="meetingTitle" name="meetingTitle" required>
+                        </div>
+                        
+                        <div class="form-row three-cols">
+                            <div class="form-group">
+                                <label for="meetingDate">التاريخ *</label>
+                                <input type="date" id="meetingDate" name="meetingDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="meetingTime">الوقت *</label>
+                                <input type="time" id="meetingTime" name="meetingTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="duration">المدة (دقيقة)</label>
+                                <input type="number" id="duration" name="duration" placeholder="60">
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="meetingLocation">مكان الاجتماع *</label>
+                                <input type="text" id="meetingLocation" name="meetingLocation" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="meetingType">نوع الاجتماع *</label>
+                                <select id="meetingType" name="meetingType" required>
+                                    <option value="عادي">عادي</option>
+                                    <option value="طارئ">طارئ</option>
+                                    <option value="تأسيسي">تأسيسي</option>
+                                    <option value="دوري">دوري</option>
+                                    <option value="مراجعة إدارة">مراجعة إدارة</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Attendees -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-users"></i>
+                            <h2>المسؤولون والحضور</h2>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="chairman">رئيس الاجتماع *</label>
+                                <input type="text" id="chairman" name="chairman" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="secretary">مقرر الاجتماع *</label>
+                                <input type="text" id="secretary" name="secretary" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>قائمة الحضور والمشاركين</label>
+                            <table class="dynamic-table" id="attendeesTable">
+                                <thead>
+                                    <tr>
+                                        <th>الاسم</th>
+                                        <th>المنصب</th>
+                                        <th>الصفة</th>
+                                        <th style="width: 100px;">تأكيد الحضور</th>
+                                        <th style="width: 120px;">التوقيع</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dynamic Rows -->
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="app.addAttendeeRow()">
+                                <i class="fas fa-plus"></i> إضافة مشارك
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Agenda & Minutes -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-list-alt"></i>
+                            <h2>وقائع الاجتماع</h2>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="button" id="aiReviewBtn" class="btn btn-info btn-sm">
+                                <i class="fas fa-wand-magic-sparkles"></i> مساعد الذكاء الاصطناعي
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="executiveSummary">ملخص تنفيذي</label>
+                            <textarea id="executiveSummary" name="executiveSummary" rows="4" placeholder="يتم تعبئته تلقائياً (اختياري)"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>بنود جدول الأعمال</label>
+                            <table class="dynamic-table" id="agendaTable">
+                                <thead>
+                                    <tr>
+                                        <th>البند</th>
+                                        <th>المتحدث</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="app.addAgendaRow()">
+                                <i class="fas fa-plus"></i> إضافة بند
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>القرارات والتوصيات</label>
+                            <table class="dynamic-table" id="decisionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>نص القرار / التوصية</th>
+                                        <th>المسؤول</th>
+                                        <th>المدة / الموعد</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="app.addDecisionRow()">
+                                <i class="fas fa-plus"></i> إضافة قرار
+                            </button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nextMeetingDate">موعد الاجتماع القادم</label>
+                            <input type="date" id="nextMeetingDate" name="nextMeetingDate">
+                        </div>
+                    </div>
+
+                    <!-- Section 4: Signatures -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <i class="fas fa-file-signature"></i>
+                            <h2>التوقيع والاعتماد</h2>
+                        </div>
+                        
+                        <div class="signatures-grid">
+                            <!-- Secretary Signature -->
+                            <div class="signature-box">
+                                <h3>توقيع مقرر الاجتماع</h3>
+                                <div id="secretarySignatureArea" class="signature-area empty">
+                                    <div class="placeholder-text">اضغط هنا لإضافة التوقيع</div>
+                                </div>
+                                <div class="signature-controls" style="display:none;">
+                                    <canvas id="secretaryCanvas" width="400" height="150"></canvas>
+                                    <div class="sig-btns">
+                                        <button type="button" id="saveSecretarySig" class="btn btn-sm btn-success"><i class="fas fa-check"></i> تأكيد</button>
+                                        <button type="button" id="clearSecretarySig" class="btn btn-sm btn-secondary"><i class="fas fa-eraser"></i> مسح</button>
+                                    </div>
+                                </div>
+                                <div id="secretaryStatus" class="signature-status"></div>
+                            </div>
+
+                            <!-- Chairman Signature -->
+                            <div class="signature-box">
+                                <h3>اعتماد رئيس الاجتماع</h3>
+                                <div id="chairmanSignatureArea" class="signature-area empty">
+                                    <div class="placeholder-text">اضغط هنا لإضافة التوقيع</div>
+                                </div>
+                                <div class="signature-controls" style="display:none;">
+                                    <canvas id="chairmanCanvas" width="400" height="150"></canvas>
+                                    <div class="sig-btns">
+                                        <button type="button" id="saveChairmanSig" class="btn btn-sm btn-success"><i class="fas fa-check"></i> تأكيد</button>
+                                        <button type="button" id="clearChairmanSig" class="btn btn-sm btn-secondary"><i class="fas fa-eraser"></i> مسح</button>
+                                    </div>
+                                </div>
+                                <div id="chairmanStatus" class="signature-status"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions sticky-actions">
+                        <button type="button" id="previewBtn" class="btn btn-info"><i class="fas fa-eye"></i> معاينة قبل الطباعة</button>
+                        <button type="submit" id="submitBtn" class="btn btn-success" disabled><i class="fas fa-save"></i> حفظ نهائي</button>
+                        <button type="button" id="generatePdf" class="btn btn-dark" disabled><i class="fas fa-file-pdf"></i> تحميل PDF</button>
+                        <button type="reset" class="btn btn-warning"><i class="fas fa-undo"></i> جديد</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Archive Section (Hidden by default) -->
+            <div id="archiveSection" style="display: none;">
+                <div class="archive-header">
+                    <h2>سجل المحاضر المعتمدة</h2>
+                    <div class="archive-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="archiveSearch" placeholder="بحث برقم المحضر، العنوان، أو التاريخ...">
+                        </div>
+                        <button id="refreshArchive" class="btn btn-sm btn-secondary"><i class="fas fa-sync"></i> تحديث</button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="archive-table">
+                        <thead>
+                            <tr>
+                                <th>الرقم المرجعي</th>
+                                <th>عنوان الاجتماع</th>
+                                <th>التاريخ</th>
+                                <th>الإدارة</th>
+                                <th>رئيس الاجتماع</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="meetingsList">
+                            <!-- Meetings will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyArchiveMessage" style="display:none; text-align:center; padding:20px; color:#777;">
+                    لا توجد محاضر مطابقة للبحث
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>معاينة المحضر</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body" id="previewContent">
+                <!-- Preview content will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button id="printPreviewBtn" class="btn btn-primary"><i class="fas fa-print"></i> طباعة / حفظ كـ PDF</button>
+                <button class="btn btn-secondary close-modal-btn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signature Modal -->
+    <div id="signatureModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 id="signatureModalTitle">توقيع المشارك</h2>
+                <span class="close-modal" id="closeSigModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="signature-box" style="margin: 0; padding: 10px;">
+                    <img id="sigPreviewImage" alt="التوقيع الحالي" style="max-width: 100%; max-height: 60px; display:none; margin-bottom:10px;">
+                    <canvas id="modalCanvas" width="400" height="150" style="border: 1px solid #ddd;"></canvas>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="saveModalSig" class="btn btn-success"><i class="fas fa-check"></i> حفظ</button>
+                <button type="button" id="clearModalSig" class="btn btn-secondary"><i class="fas fa-eraser"></i> مسح</button>
+                <button type="button" id="cancelModalSig" class="btn btn-danger">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Assistant Modal -->
+    <div id="aiModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>مساعد الذكاء الاصطناعي</h2>
+                <span class="close-modal" id="closeAiModal">&times;</span>
+            </div>
+            <div class="modal-body" style="background: white; padding: 20px;">
+                <div id="aiModalContent"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="applyAiChanges" class="btn btn-success"><i class="fas fa-check"></i> تطبيق التعديلات</button>
+                <button type="button" id="closeAiModalBtn" class="btn btn-secondary">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

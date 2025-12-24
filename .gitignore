@@ -1,0 +1,20 @@
+node_modules/
+npm-debug.log*
+*.log
+.DS_Store
+.vscode/
+coverage/
+
+# Server
+server/node_modules/
+server/.env
+.env
+*.sqlite
+server/database.sqlite
+
+# Build outputs
+dist/
+build/
+
+# OS
+Thumbs.db

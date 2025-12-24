@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار PDF</title>
+    <script src="./node_modules/jspdf/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <h1>اختبار مكتبة jsPDF</h1>
+    <button onclick="testPDF()">اختبار إنشاء PDF</button>
+    
+    <script>
+        function testPDF() {
+            try {
+                console.log('جاري اختبار jsPDF...');
+                console.log('نوع jspdf:', typeof jspdf);
+                console.log('محتوى jspdf:', jspdf);
+                
+                if (typeof jspdf !== 'undefined' && jspdf.jsPDF) {
+                    console.log('jsPDF موجود:', typeof jspdf.jsPDF);
+                    const pdf = new jspdf.jsPDF();
+                    pdf.text('اختبار نجاح!', 10, 10);
+                    pdf.save('test.pdf');
+                    alert('تم إنشاء PDF بنجاح!');
+                } else {
+                    console.error('jsPDF غير معروف');
+                    alert('المكتبة غير محملة بشكل صحيح');
+                }
+            } catch (error) {
+                console.error('خطأ:', error);
+                alert('خطأ: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
