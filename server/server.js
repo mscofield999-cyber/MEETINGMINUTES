@@ -18,14 +18,11 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
 // Session Middleware
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
 app.use(session({
     secret: process.env.SESSION_SECRET || 'change_me_in_production',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: process.env.NODE_ENV === 'production' }
+    cookie: { secure: process.env.SESSION_COOKIE_SECURE === 'true' }
 }));
 
 // Auth Middleware
