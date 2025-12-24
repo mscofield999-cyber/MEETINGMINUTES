@@ -43,6 +43,10 @@
         </div>
         <form id="loginForm">
             <div class="mb-3">
+                <label for="apiBase" class="form-label">رابط الخادم (اختياري)</label>
+                <input type="url" class="form-control" id="apiBase" placeholder="https://your-backend.onrender.com">
+            </div>
+            <div class="mb-3">
                 <label for="username" class="form-label">اسم المستخدم</label>
                 <input type="text" class="form-control" id="username" required>
             </div>
@@ -59,13 +63,20 @@
 
     <script>
         const isDevPy = window.location.port === '8000';
-        const API_BASE = isDevPy ? 'http://localhost:3000' : '';
-        const redirectBase = isDevPy ? 'http://localhost:3000' : window.location.origin;
+        const storedApi = localStorage.getItem('API_BASE') || '';
+        const API_BASE = storedApi || (isDevPy ? 'http://localhost:3000' : '');
+        const redirectBase = storedApi ? storedApi : (isDevPy ? 'http://localhost:3000' : window.location.origin);
+        const apiBaseInput = document.getElementById('apiBase');
+        apiBaseInput.value = storedApi;
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMessage');
+            const apiCandidate = apiBaseInput.value.trim();
+            if (apiCandidate) {
+                localStorage.setItem('API_BASE', apiCandidate);
+            }
 
             try {
                 const response = await fetch(API_BASE + '/api/login', {

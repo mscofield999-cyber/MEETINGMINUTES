@@ -1,4 +1,5 @@
-const API_BASE = (location.port === '8000') ? 'http://localhost:3000' : '';
+const API_BASE = (localStorage.getItem('API_BASE') && localStorage.getItem('API_BASE').trim())
+    || ((location.port === '8000') ? 'http://localhost:3000' : '');
 class MeetingMinutesApp {
     constructor() {
         this.secretaryPad = null;
