@@ -1,5 +1,6 @@
+const isDevPy = window.location.port === '8000' || window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
 const API_BASE = (localStorage.getItem('API_BASE') && localStorage.getItem('API_BASE').trim())
-    || ((location.port === '8000') ? 'http://localhost:3000' : '');
+    || (isDevPy ? 'https://meetingminutes-t657.vercel.app' : '');
 class MeetingMinutesApp {
     constructor() {
         this.secretaryPad = null;

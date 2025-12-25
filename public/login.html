@@ -44,7 +44,7 @@
         <form id="loginForm">
             <div class="mb-3">
                 <label for="apiBase" class="form-label">رابط الخادم (اختياري)</label>
-                <input type="url" class="form-control" id="apiBase" placeholder="https://your-backend.onrender.com">
+                <input type="url" class="form-control" id="apiBase" placeholder="https://meetingminutes-t657.vercel.app">
             </div>
             <div class="mb-3">
                 <label for="username" class="form-label">اسم المستخدم</label>
@@ -62,12 +62,14 @@
     </div>
 
     <script>
-        const isDevPy = window.location.port === '8000';
+        const isDevPy = window.location.port === '8000' || window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
         const storedApi = localStorage.getItem('API_BASE') || '';
-        const API_BASE = storedApi || (isDevPy ? 'http://localhost:3000' : '');
-        const redirectBase = storedApi ? storedApi : (isDevPy ? 'http://localhost:3000' : window.location.origin);
+        // If local dev (Python/LiveServer), default to Vercel production if no custom API set
+        const API_BASE = storedApi || (isDevPy ? 'https://meetingminutes-t657.vercel.app' : '');
+        
         const apiBaseInput = document.getElementById('apiBase');
         apiBaseInput.value = storedApi;
+        
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
