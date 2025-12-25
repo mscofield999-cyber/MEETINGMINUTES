@@ -66,3 +66,5 @@ module.exports = async (req, res) => {
   res.statusCode = 405;
   res.end();
 };
+
+module.exports = allowCors(handler);

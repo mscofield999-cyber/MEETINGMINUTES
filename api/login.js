@@ -42,3 +42,5 @@ module.exports = async (req, res) => {
     res.end(JSON.stringify({ success: false, error: 'server_error' }));
   }
 };
+
+module.exports = allowCors(handler);

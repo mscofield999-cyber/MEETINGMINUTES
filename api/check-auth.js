@@ -1,6 +1,7 @@
 const { getUserFromRequest } = require('../lib/session');
+const allowCors = require('../lib/cors');
 
-module.exports = async (req, res) => {
+const handler = async (req, res) => {
   const user = getUserFromRequest(req);
   res.setHeader('Content-Type', 'application/json');
   if (!user) {
@@ -9,3 +10,5 @@ module.exports = async (req, res) => {
   }
   res.end(JSON.stringify({ authenticated: true, ...user }));
 };
+
+module.exports = allowCors(handler);
