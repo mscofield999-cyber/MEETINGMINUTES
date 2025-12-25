@@ -1,4 +1,6 @@
-module.exports = async (req, res) => {
+const allowCors = require('../lib/cors');
+
+const handler = async (req, res) => {
   const hasProject = !!process.env.FIREBASE_PROJECT_ID;
   const hasServiceJson = !!process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   const hasSecret = !!process.env.SESSION_SECRET;
